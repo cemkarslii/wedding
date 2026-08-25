@@ -1,0 +1,22 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  <li class="photo-selection-tools" aria-label="Medya seçim işlemleri">
+    <button type="button" class="photo-tool-button" data-select-all-photos>
+      Tümünü seç
+    </button>
+    <button type="button" class="photo-tool-button photo-download-button" data-download-selected>
+      Seçilen dosyaları ZIP indir
+    </button>
+  </li>
+  <li class="photo-view-switcher" aria-label="Görünüm seçimi">
+    <button type="button" class="photo-view-button" data-photo-view="list" aria-pressed="true">
+      <span aria-hidden="true">☷</span> Liste
+    </button>
+    <button type="button" class="photo-view-button" data-photo-view="grid" aria-pressed="false">
+      <span aria-hidden="true">▦</span> Grid
+    </button>
+  </li>
+  {{ block.super }}
+{% endblock %}

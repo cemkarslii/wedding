@@ -2,8 +2,8 @@
 <section class="section section--cream" id="share-photo">
   <div class="reveal">
     <span class="section__label">Anılar</span>
-    <h2 class="section__title">Fotoğraflarınızı Paylaşın</h2>
-    <p class="section__desc">Düğünümüzden çektiğiniz fotoğrafları bizimle paylaşın, birlikte güzel anılar biriktirelim.</p>
+    <h2 class="section__title">Fotoğraf ve Videolarınızı Paylaşın</h2>
+    <p class="section__desc">Düğünümüzden çektiğiniz fotoğraf ve videoları bizimle paylaşın, birlikte güzel anılar biriktirelim.</p>
   </div>
   <form id="photoUploadForm" method="post" enctype="multipart/form-data" action="{% url 'upload_photos' %}">
     {% csrf_token %}
@@ -17,19 +17,19 @@
       <p class="photos__upload-text">
         <strong>Dokunarak seçin</strong> veya sürükleyip bırakın
       </p>
-      <span class="photos__upload-hint">JPG, PNG • Dosya başına maks. 10MB • En fazla 10 fotoğraf</span>
-      <input type="file" id="photoInput" name="photos" multiple accept="image/jpeg,image/png" />
+      <span class="photos__upload-hint">JPG, PNG maks. 10MB • MP4, MOV, WebM maks. 100MB • En fazla 10 dosya</span>
+      <input type="file" id="photoInput" name="media_files" multiple accept="image/jpeg,image/png,video/mp4,video/quicktime,video/webm" />
     </div>
     <div class="photos__preview" id="photoPreview"></div>
-    <p class="form-error" id="photoUploadError" role="alert"{% if not photo_upload_errors %} hidden{% endif %}>
-      {% if photo_upload_errors %}{{ photo_upload_errors.photos.0 }}{% endif %}
+    <p class="form-error" id="photoUploadError" role="alert"{% if not media_upload_errors %} hidden{% endif %}>
+      {% if media_upload_errors %}{{ media_upload_errors.media_files.0 }}{% endif %}
     </p>
     <p class="photos__upload-success" id="photoUploadSuccess" role="status" aria-live="polite" hidden></p>
     <button type="submit" class="photos__share-btn" id="photoShareBtn">
       <svg viewBox="0 0 24 24">
         <path d="M22 2L11 13" />
         <path d="M22 2L15 22l-4-9-9-4z" />
-      </svg>Fotoğrafları Gönder
+      </svg>Dosyaları Gönder
     </button>
   </form>
 </section>

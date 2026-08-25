@@ -232,8 +232,10 @@
   const photoUploadSuccess = $("#photoUploadSuccess");
   let uploadedFiles = [];
   const maxPhotoSize = 10 * 1024 * 1024;
-  const maxPhotoCount = 10;
-  const allowedPhotoTypes = ["image/jpeg", "image/png"];
+  const maxVideoSize = 100 * 1024 * 1024;
+  const maxMediaCount = 10;
+  const allowedImageTypes = ["image/jpeg", "image/png"];
+  const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
 
   const showPhotoError = (message) => {
     photoUploadError.textContent = message;
@@ -266,47 +268,53 @@
     photoUploadError.hidden = true;
     photoUploadSuccess.hidden = true;
     Array.from(files).forEach((file) => {
-      if (uploadedFiles.length >= maxPhotoCount) {
-        showPhotoError(`Tek seferde en fazla ${maxPhotoCount} fotoğraf seçebilirsiniz.`);
+      const isImage = allowedImageTypes.includes(file.type);
+      const isVideo = allowedVideoTypes.includes(file.type);
+      if (uploadedFiles.length >= maxMediaCount) {
+        showPhotoError(`Tek seferde en fazla ${maxMediaCount} dosya seçebilirsiniz.`);
         return;
       }
-      if (!allowedPhotoTypes.includes(file.type)) {
-        showPhotoError("Yalnızca JPG ve PNG fotoğrafları seçebilirsiniz.");
+      if (!isImage && !isVideo) {
+        showPhotoError("Yalnızca JPG, PNG, MP4, MOV veya WebM seçebilirsiniz.");
         return;
       }
-      if (file.size > maxPhotoSize) {
+      if (isImage && file.size > maxPhotoSize) {
         showPhotoError(`${file.name} dosyası 10 MB sınırını aşıyor.`);
         return;
       }
+      if (isVideo && file.size > maxVideoSize) {
+        showPhotoError(`${file.name} dosyası 100 MB sınırını aşıyor.`);
+        return;
+      }
       uploadedFiles.push(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const div = document.createElement("div");
-        div.className = "photos__preview-item";
-        div.innerHTML = `
-        <img src="${e.target.result}" alt="Fotoğraf" />
+      const previewUrl = URL.createObjectURL(file);
+      const div = document.createElement("div");
+      div.className = "photos__preview-item";
+      div.dataset.previewUrl = previewUrl;
+      div.innerHTML = `
+        ${isVideo ? '<video controls muted playsinline preload="metadata"></video>' : '<img alt="Fotoğraf önizlemesi" />'}
         <button class="photos__preview-item__remove" aria-label="Kaldır">×</button>
       `;
-        div
-          .querySelector(".photos__preview-item__remove")
-          .addEventListener("click", () => {
-            const idx = uploadedFiles.indexOf(file);
-            if (idx !== -1) uploadedFiles.splice(idx, 1);
-            div.remove();
-            if (uploadedFiles.length === 0)
-              shareBtn.classList.remove("is-visible");
-          });
-        preview.appendChild(div);
-        shareBtn.classList.add("is-visible");
-      };
-      reader.readAsDataURL(file);
+      div.querySelector(isVideo ? "video" : "img").src = previewUrl;
+      div
+        .querySelector(".photos__preview-item__remove")
+        .addEventListener("click", () => {
+          const idx = uploadedFiles.indexOf(file);
+          if (idx !== -1) uploadedFiles.splice(idx, 1);
+          URL.revokeObjectURL(previewUrl);
+          div.remove();
+          if (uploadedFiles.length === 0)
+            shareBtn.classList.remove("is-visible");
+        });
+      preview.appendChild(div);
+      shareBtn.classList.add("is-visible");
     });
   };
 
   photoForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (uploadedFiles.length === 0) {
-      showPhotoError("Lütfen en az bir fotoğraf seçin.");
+      showPhotoError("Lütfen en az bir fotoğraf veya video seçin.");
       return;
     }
 
@@ -320,7 +328,7 @@
       "csrfmiddlewaretoken",
       photoForm.querySelector("[name='csrfmiddlewaretoken']").value,
     );
-    uploadedFiles.forEach((file) => formData.append("photos", file));
+    uploadedFiles.forEach((file) => formData.append("media_files", file));
 
     try {
       const response = await fetch(photoForm.action, {
@@ -342,13 +350,16 @@
         const messages = Object.values(data.errors || {})
           .flat()
           .map((error) => error.message);
-        throw new Error(messages[0] || "Fotoğraflar yüklenemedi.");
+        throw new Error(messages[0] || "Dosyalar yüklenemedi.");
       }
 
       uploadedFiles = [];
+      preview.querySelectorAll("[data-preview-url]").forEach((item) => {
+        URL.revokeObjectURL(item.dataset.previewUrl);
+      });
       preview.replaceChildren();
       shareBtn.classList.remove("is-visible");
-      photoUploadSuccess.textContent = `${data.uploaded_count} fotoğraf başarıyla gönderildi. Teşekkür ederiz!`;
+      photoUploadSuccess.textContent = `${data.uploaded_count} dosya başarıyla gönderildi. Teşekkür ederiz!`;
       photoUploadSuccess.hidden = false;
     } catch (error) {
       showPhotoError(
