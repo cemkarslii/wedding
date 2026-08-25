@@ -94,7 +94,7 @@ STATIC_ROOT = BASE_DIR / "public/static"
 
 # User-uploaded files
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = BASE_DIR / "public/media"
 
 # Logging
 LOGGING = {
