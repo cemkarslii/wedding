@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1"]),
+    DB_CONN_MAX_AGE=(int, 0),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -62,14 +63,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Keep Django's management and test tooling operational even though the site
-# does not currently use database-backed application models.
+# SQLite is the zero-configuration local default. Production can switch to
+# PostgreSQL by setting DATABASE_URL=postgresql://user:password@host:5432/dbname.
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": env.db(
+        "DATABASE_URL",
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+    )
 }
+DATABASES["default"]["CONN_MAX_AGE"] = env("DB_CONN_MAX_AGE")
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
