@@ -1,6 +1,9 @@
 import base64
 import io
+import os
 import shutil
+import subprocess
+import sys
 import tempfile
 import zipfile
 
@@ -10,6 +13,29 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from page.models import WeddingMessage, WeddingPhoto
+
+
+class ProductionSettingsTests(TestCase):
+    def test_default_file_storage_is_configured(self):
+        environment = os.environ.copy()
+        environment["DJANGO_SETTINGS_MODULE"] = "config.settings.production"
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                (
+                    "import django; django.setup(); "
+                    "from django.core.files.storage import storages; "
+                    "assert storages['default'].__class__.__name__ == "
+                    "'FileSystemStorage'"
+                ),
+            ],
+            capture_output=True,
+            env=environment,
+            text=True,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 class SendMessageTests(TestCase):
