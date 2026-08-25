@@ -1,0 +1,369 @@
+{% load static %}
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}" />
+    <link rel="shortcut icon" href="{% static 'images/favicon.svg' %}" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>Aysu & Gökhan — 26 Eylül 2026</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@200;300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <!-- ── Background Music ─────────────────────────── -->
+    <audio id="bgMusic" loop preload="auto">
+      <source src="{% static 'audio/song.mp3' %}" type="audio/mpeg" />
+    </audio>
+
+    <!-- ── Intro Screen ─────────────────────────────── -->
+    <section class="intro" id="intro" aria-label="Giriş">
+      <video
+        class="video-fullscreen"
+        id="introVideo"
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+      >
+          <source src="{% static 'images/intro.mp4' %}" type="video/mp4" />
+      </video>
+      <button class="intro__skip" id="skipBtn" aria-label="Giriş videosunu geç">
+        <span>Zarfı Aç</span>
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"
+          />
+        </svg>
+      </button>
+    </section>
+
+    <!-- ── Sound Toggle ─────────────────────────────── -->
+    <button class="sound-toggle" id="soundToggle" aria-label="Müzik aç/kapat">
+      <div class="sound-toggle__bars">
+        <span class="sound-toggle__bar"></span>
+        <span class="sound-toggle__bar"></span>
+        <span class="sound-toggle__bar"></span>
+        <span class="sound-toggle__bar"></span>
+      </div>
+    </button>
+
+    <!-- ── Main Content ─────────────────────────────── -->
+    <main class="main" id="main">
+      <!-- ▸ Hero -->
+      <section class="hero" aria-label="Gökhan ve Aysu">
+        <video
+          class="video-fullscreen"
+          id="headerVideo"
+          loop
+          muted
+          playsinline
+          preload="auto"
+        >
+          <source src="{% static 'images/header.mp4' %}" type="video/mp4" />
+        </video>
+        <div class="hero__overlay">
+          <div class="hero__names-group">
+            <h1 class="hero__name">Aysu</h1>
+            <h1 class="hero__name">Gökhan</h1>
+          </div>
+          <p class="hero__subtitle">Evleniyoruz</p>
+          <div class="hero__date-block">
+            <div class="hero__date-row">
+              <span class="hero__date-month">Eylül</span>
+              <span class="hero__line"></span>
+              <span class="hero__date-day">26</span>
+              <span class="hero__line"></span>
+              <span class="hero__date-year">2026</span>
+            </div>
+            <span class="hero__date-weekday">Cumartesi</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ▸ Welcome -->
+      <section class="section section--cream">
+        <div class="reveal">
+          <h2 class="section__title">Sevgili Dostlarımız ve Ailemiz,</h2>
+        </div>
+        <div class="reveal reveal-delay-1">
+          <p class="welcome__text">
+            Birlikte yeni bir hikâyeye başlarken, mutluluğumuzu sevdiklerimizle
+            paylaşmanın heyecanını yaşıyoruz.
+          </p>
+        </div>
+        <div class="reveal reveal-delay-2">
+          <p class="welcome__text welcome__text--spaced">
+            Bu özel günümüzde sizleri de aramızda görmekten onur ve mutluluk
+            duyarız.
+          </p>
+        </div>
+      </section>
+
+      <!-- ▸ Countdown -->
+      <section class="section section--dark">
+        <div class="reveal">
+          <span class="section__label">Geri Sayım</span>
+          <h2 class="section__title">Büyük Güne</h2>
+        </div>
+        <div class="countdown reveal reveal-delay-1" id="countdown">
+          <div class="countdown__item">
+            <span class="countdown__number" id="cdDays">--</span>
+            <span class="countdown__label">Gün</span>
+          </div>
+          <span class="countdown__separator">:</span>
+          <div class="countdown__item">
+            <span class="countdown__number" id="cdHours">--</span>
+            <span class="countdown__label">Saat</span>
+          </div>
+          <span class="countdown__separator">:</span>
+          <div class="countdown__item">
+            <span class="countdown__number" id="cdMins">--</span>
+            <span class="countdown__label">Dakika</span>
+          </div>
+          <span class="countdown__separator">:</span>
+          <div class="countdown__item">
+            <span class="countdown__number" id="cdSecs">--</span>
+            <span class="countdown__label">Saniye</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ▸ Families -->
+      <section class="section section--cream">
+        <div class="reveal">
+          <span class="section__label">Sevdiklerimiz</span>
+          <h2 class="section__title">Ailelerimiz</h2>
+        </div>
+        <div class="families__grid">
+          <div class="family-card reveal reveal-delay-1">
+            <svg class="family-card__icon" viewBox="0 0 48 48">
+              <circle cx="24" cy="14" r="8" />
+              <path d="M8 42c0-8.837 7.163-16 16-16s16 7.163 16 16" />
+            </svg>
+            <div class="family-card__role">Aysu Ulukan</div>
+            <div class="family-card__side">Gelin Tarafı</div>
+            <div class="family-card__names">Atiye & Bülent <br> Ulukan</div>
+          </div>
+          <div class="family-card reveal reveal-delay-2">
+            <svg class="family-card__icon" viewBox="0 0 48 48">
+              <circle cx="24" cy="14" r="8" />
+              <path d="M8 42c0-8.837 7.163-16 16-16s16 7.163 16 16" />
+            </svg>
+            <div class="family-card__role">Gökhan Uslu</div>
+            <div class="family-card__side">Damat Tarafı</div>
+            <div class="family-card__names">Zeynep & Mehmet <br> Uslu</div>
+            
+          
+          </div>
+        </div>
+      </section>
+
+      <!-- ▸ Events -->
+      <section class="section section--white">
+        <div class="reveal">
+          <span class="section__label">Düğün Programı</span>
+          <h2 class="section__title">Önemli Anlar</h2>
+          <div class="section__divider"></div>
+        </div>
+        <div class="events__grid">
+          <div class="event-card reveal reveal-delay-1">
+            <span class="event-card__badge">Tören</span>
+            <svg class="event-card__icon" viewBox="0 0 48 48">
+              <path d="M24 4l-2 6H8l12 9-4 13 8-6 8 6-4-13 12-9H26z" />
+            </svg>
+            <div class="event-card__title">Nikâh Töreni</div>
+            <div class="event-card__detail">
+              <strong>26 Eylül 2026</strong><br />
+              Sole Mio
+            </div>
+          </div>
+          <div class="event-card reveal reveal-delay-2">
+            <span class="event-card__badge">Kutlama</span>
+            <svg class="event-card__icon" viewBox="0 0 48 48">
+              <path d="M8 38V22l16-14 16 14v16H30V28h-12v10H8z" />
+            </svg>
+            <div class="event-card__title">Düğün</div>
+            <div class="event-card__detail">
+              <strong>26 Eylül 2026</strong><br />
+       
+              Sole Mio
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ▸ Location -->
+      <section class="section section--cream">
+        <div class="reveal">
+          <span class="section__label">Konum</span>
+          <h2 class="section__title">Nasıl Ulaşırım?</h2>
+          <div class="section__divider"></div>
+        </div>
+        <div class="location__wrapper reveal reveal-delay-1">
+          <div class="location__map">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3114.7509608624123!2d26.9980693769989!3d38.67759111014505!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14ba2dded25e71f7%3A0xc5769b7edaa219e9!2sSole%20Mio%20Event!5e0!3m2!1str!2str!4v1787643358406!5m2!1str!2str"
+              title="Sole Mio Event konumu"
+              width="600"
+              height="450"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+          <div class="location__info">
+            <div class="location__row">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
+              <span>Hatundere, Eski Foça Asfaltı Cad No:116, Menemen/İzmir</span>
+            </div>
+            <div class="location__row">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+              <span>26 Eylül 2026</span>
+            </div>
+            <a
+              class="location__btn"
+              href="https://www.google.com/maps/dir/?api=1&amp;destination=Sole%20Mio%20Event&amp;destination_place_id=ChIJ93Fe0t4tuhQR6Rmi2n6bdsU"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
+              Yol Tarifi Al
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ▸ Message -->
+      <section class="section section--white">
+        <div class="reveal">
+          <span class="section__label">İletişim</span>
+          <h2 class="section__title">Bize Mesaj Yazın</h2>
+          <p class="section__desc">
+            Dileklerinizi, sorularınızı veya güzel sözlerinizi bizimle paylaşın.
+          </p>
+        </div>
+        <form class="message__form reveal reveal-delay-1" id="messageForm">
+          <div class="form-group">
+            <input type="text" placeholder="Adınız Soyadınız" required />
+          </div>
+          <div class="form-group">
+            <input
+              type="text"
+              placeholder="Katılım durumunuz (ör: 2 kişi katılacağız)"
+            />
+          </div>
+          <div class="form-group">
+            <textarea placeholder="Mesajınız..." rows="4" required></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            <svg viewBox="0 0 24 24">
+              <path d="M22 2L11 13" />
+              <path d="M22 2L15 22l-4-9-9-4z" />
+            </svg>
+            Gönder
+          </button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <svg class="form-success__icon" viewBox="0 0 56 56">
+            <circle cx="28" cy="28" r="26" />
+            <path
+              d="M17 28l7 7 15-15"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <p class="form-success__text">
+            Mesajınız iletildi! Teşekkür ederiz 💛
+          </p>
+        </div>
+      </section>
+
+      <!-- ▸ Photo Sharing -->
+      <section class="section section--cream">
+        <div class="reveal">
+          <span class="section__label">Anılar</span>
+          <h2 class="section__title">Fotoğraflarınızı Paylaşın</h2>
+          <p class="section__desc">
+            Düğünümüzden çektiğiniz fotoğrafları bizimle paylaşın, birlikte
+            güzel anılar biriktirelim.
+          </p>
+        </div>
+        <div
+          class="photos__upload-area reveal reveal-delay-1"
+          id="photoUploadArea"
+        >
+          <svg class="photos__upload-icon" viewBox="0 0 52 52">
+            <rect x="4" y="10" width="44" height="34" rx="4" />
+            <circle cx="20" cy="24" r="5" />
+            <path d="M4 36l12-10 8 6 12-10 12 10" />
+            <path
+              d="M26 4v12M20 10l6-6 6 6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <p class="photos__upload-text">
+            <strong>Dokunarak seçin</strong> veya sürükleyip bırakın
+          </p>
+          <span class="photos__upload-hint">JPG, PNG • Maks 10MB</span>
+          <input
+            type="file"
+            id="photoInput"
+            multiple
+            accept="image/*"
+          />
+        </div>
+        <div class="photos__preview" id="photoPreview"></div>
+        <button class="photos__share-btn" id="photoShareBtn">
+          <svg viewBox="0 0 24 24">
+            <path d="M22 2L11 13" />
+            <path d="M22 2L15 22l-4-9-9-4z" />
+          </svg>
+          Fotoğrafları Gönder
+        </button>
+      </section>
+
+      <!-- ▸ Footer -->
+      <footer class="footer">
+        <div class="reveal">
+          <div class="footer__names">Aysu & Gökhan</div>
+          <div class="footer__date">26 Eylül 2026</div>
+          <div class="footer__hearts">♥ ♥ ♥</div>
+          <div class="footer__copy">Sevgiyle hazırlandı</div>
+        </div>
+      </footer>
+    </main>
+
+    <script src="{% static 'js/scripts.js' %}"></script>
+  </body>
+</html>
