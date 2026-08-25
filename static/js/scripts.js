@@ -191,6 +191,7 @@
       const response = await fetch(form.action, {
         method: "POST",
         body: new FormData(form),
+        credentials: "same-origin",
         headers: {
           Accept: "application/json",
           "X-Requested-With": "XMLHttpRequest",
@@ -334,6 +335,7 @@
       const response = await fetch(photoForm.action, {
         method: "POST",
         body: formData,
+        credentials: "same-origin",
         headers: {
           Accept: "application/json",
           "X-Requested-With": "XMLHttpRequest",
