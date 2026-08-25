@@ -712,6 +712,7 @@ textarea {
   position: relative;
 }
 .form-group input,
+.form-group select,
 .form-group textarea {
   width: 100%;
   background: var(--c-white);
@@ -727,6 +728,7 @@ textarea {
     box-shadow 0.3s;
 }
 .form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
   border-color: var(--c-gold);
   box-shadow: 0 0 0 3px var(--c-gold-soft);
@@ -739,6 +741,27 @@ textarea {
 .form-group textarea {
   resize: vertical;
   min-height: 130px;
+}
+.form-group select {
+  appearance: none;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--c-text-muted) 50%),
+    linear-gradient(135deg, var(--c-text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) 50%,
+    calc(100% - 15px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+.form-error {
+  color: #a33;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.form-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 .form-submit {
   display: inline-flex;

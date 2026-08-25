@@ -1,0 +1,39 @@
+<!-- ▸ Message -->
+<section class="section section--white" id="contact-form">
+  <div class="reveal">
+    <span class="section__label">İletişim</span>
+    <h2 class="section__title">Bize Mesaj Yazın</h2>
+    <p class="section__desc">Dileklerinizi, sorularınızı veya güzel sözlerinizi bizimle paylaşın.</p>
+  </div>
+  <form class="message__form reveal reveal-delay-1" id="messageForm" method="post" action="{% url 'send_message' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ contact_form.message_type }}
+    </div>
+    <div class="form-group">
+      {{ contact_form.name }}
+    </div>
+    <div class="form-group" id="attendanceGroup" hidden>
+      {{ contact_form.attendance }}
+    </div>
+    <div class="form-group">
+      {{ contact_form.message }}
+    </div>
+    <p class="form-error" id="formError" role="alert"{% if not contact_form.errors %} hidden{% endif %}>
+      {% if contact_form.errors %}Lütfen formdaki alanları kontrol edin.{% endif %}
+    </p>
+    <button type="submit" class="form-submit">
+      <svg viewBox="0 0 24 24">
+        <path d="M22 2L11 13" />
+        <path d="M22 2L15 22l-4-9-9-4z" />
+      </svg>Gönder
+    </button>
+  </form>
+  <div class="form-success" id="formSuccess" role="status" aria-live="polite">
+    <svg class="form-success__icon" viewBox="0 0 56 56">
+      <circle cx="28" cy="28" r="26" />
+      <path d="M17 28l7 7 15-15" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <p class="form-success__text">Mesajınız iletildi! Teşekkür ederiz 💛</p>
+  </div>
+</section>

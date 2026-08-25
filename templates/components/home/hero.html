@@ -1,0 +1,24 @@
+{% load static %}
+<!-- ▸ Hero -->
+<section class="hero" aria-label="Gökhan ve Aysu">
+  <video class="video-fullscreen" id="headerVideo" loop muted playsinline preload="auto">
+    <source src="{% static 'images/header.mp4' %}" type="video/mp4" />
+  </video>
+  <div class="hero__overlay">
+    <div class="hero__names-group">
+      <h1 class="hero__name">Aysu</h1>
+      <h1 class="hero__name">Gökhan</h1>
+    </div>
+    <p class="hero__subtitle">Evleniyoruz</p>
+    <div class="hero__date-block">
+      <div class="hero__date-row">
+        <span class="hero__date-month">Eylül</span>
+        <span class="hero__line"></span>
+        <span class="hero__date-day">26</span>
+        <span class="hero__line"></span>
+        <span class="hero__date-year">2026</span>
+      </div>
+      <span class="hero__date-weekday">Cumartesi</span>
+    </div>
+  </div>
+</section>

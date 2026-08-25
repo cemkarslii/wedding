@@ -165,10 +165,61 @@
   /* ── Message Form ──────────────────────────────── */
   const form = $("#messageForm");
   const formSuccess = $("#formSuccess");
-  form.addEventListener("submit", (e) => {
+  const formError = $("#formError");
+  const messageType = $("#id_message_type");
+  const attendanceGroup = $("#attendanceGroup");
+  const attendanceInput = $("#id_attendance");
+  const formSubmit = form.querySelector("button[type='submit']");
+
+  const toggleAttendance = () => {
+    const isAttendance = messageType.value === "attendance_status";
+    attendanceGroup.hidden = !isAttendance;
+    attendanceInput.disabled = !isAttendance;
+    attendanceInput.required = isAttendance;
+  };
+
+  toggleAttendance();
+  messageType.addEventListener("change", toggleAttendance);
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    form.style.display = "none";
-    formSuccess.classList.add("is-visible");
+    formError.hidden = true;
+    formSubmit.disabled = true;
+    form.setAttribute("aria-busy", "true");
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: {
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error("Sunucudan geçerli bir yanıt alınamadı.");
+      }
+
+      if (!response.ok || !data.success) {
+        const messages = Object.values(data.errors || {})
+          .flat()
+          .map((error) => error.message);
+        throw new Error(messages[0] || "Mesaj gönderilemedi.");
+      }
+
+      form.style.display = "none";
+      formSuccess.classList.add("is-visible");
+    } catch (error) {
+      formError.textContent =
+        error.message || "Bir hata oluştu. Lütfen tekrar deneyin.";
+      formError.hidden = false;
+    } finally {
+      formSubmit.disabled = false;
+      form.removeAttribute("aria-busy");
+    }
   });
 
   /* ── Photo Upload ──────────────────────────────── */

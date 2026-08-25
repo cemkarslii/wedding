@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}" />
+    <link rel="shortcut icon" href="{% static 'images/favicon.svg' %}" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Aysu & Gökhan — 26 Eylül 2026</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@200;300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <!-- ── Background Music ─────────────────────────── -->
+    <audio id="bgMusic" loop preload="auto">
+      <source src="{% static 'audio/song.mp3' %}" type="audio/mpeg" />
+    </audio>
+    {% block intro %}
+      {% include 'components/base/intro.html' %}
+    {% endblock %}
+
+    {% block music %}
+      {% include 'components/base/music.html' %}
+    {% endblock %}
+
+    <!-- ── Main Content ─────────────────────────────── -->
+    <main class="main" id="main">
+      {% block content %}
+
+      {% endblock %}
+      {% block footer %}
+        {% include 'components/base/footer.html' %}
+      {% endblock %}
+    </main>
+
+    <script src="{% static 'js/scripts.js' %}"></script>
+  </body>
+</html>

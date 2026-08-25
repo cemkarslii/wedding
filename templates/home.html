@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  {% include 'components/home/hero.html' %}
+
+  {% include 'components/home/welcome.html' %}
+  {% include 'components/home/countdown.html' %}
+  {% include 'components/home/families.html' %}
+  {% include 'components/home/events.html' %}
+  {% include 'components/home/location.html' %}
+  {% include 'components/home/contact-form.html' %}
+  {% include 'components/home/photo-share.html' %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% load static %}
+<!-- ── Intro Screen ─────────────────────────────── -->
+<section class="intro" id="intro" aria-label="Giriş">
+  <video class="video-fullscreen" id="introVideo" autoplay muted playsinline preload="auto">
+    <source src="{% static 'images/intro.mp4' %}" type="video/mp4" />
+  </video>
+  <button class="intro__skip" id="skipBtn" aria-label="Giriş videosunu geç">
+    <span>Zarfı Aç</span>
+    <svg viewBox="0 0 24 24">
+      <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
+    </svg>
+  </button>
+</section>
