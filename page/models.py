@@ -20,3 +20,11 @@ class WeddingMessage(models.Model):
 
     def __str__(self):
         return f"{self.name}: {self.message[:50]}..."
+
+
+class WeddingPhoto(models.Model):
+    image = models.ImageField(upload_to="wedding_photos/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.image.name

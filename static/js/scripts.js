@@ -223,13 +223,26 @@
   });
 
   /* ── Photo Upload ──────────────────────────────── */
+  const photoForm = $("#photoUploadForm");
   const uploadArea = $("#photoUploadArea");
   const photoInput = $("#photoInput");
   const preview = $("#photoPreview");
   const shareBtn = $("#photoShareBtn");
+  const photoUploadError = $("#photoUploadError");
+  const photoUploadSuccess = $("#photoUploadSuccess");
   let uploadedFiles = [];
+  const maxPhotoSize = 10 * 1024 * 1024;
+  const maxPhotoCount = 10;
+  const allowedPhotoTypes = ["image/jpeg", "image/png"];
 
-  uploadArea.addEventListener("click", () => photoInput.click());
+  const showPhotoError = (message) => {
+    photoUploadError.textContent = message;
+    photoUploadError.hidden = false;
+  };
+
+  uploadArea.addEventListener("click", (e) => {
+    if (e.target !== photoInput) photoInput.click();
+  });
 
   uploadArea.addEventListener("dragover", (e) => {
     e.preventDefault();
@@ -244,14 +257,27 @@
     handleFiles(e.dataTransfer.files);
   });
 
-  photoInput.addEventListener("change", () =>
-    handleFiles(photoInput.files),
-  );
+  photoInput.addEventListener("change", () => {
+    handleFiles(photoInput.files);
+    photoInput.value = "";
+  });
 
   const handleFiles = (files) => {
+    photoUploadError.hidden = true;
+    photoUploadSuccess.hidden = true;
     Array.from(files).forEach((file) => {
-      if (!file.type.startsWith("image/")) return;
-      if (file.size > 10 * 1024 * 1024) return;
+      if (uploadedFiles.length >= maxPhotoCount) {
+        showPhotoError(`Tek seferde en fazla ${maxPhotoCount} fotoğraf seçebilirsiniz.`);
+        return;
+      }
+      if (!allowedPhotoTypes.includes(file.type)) {
+        showPhotoError("Yalnızca JPG ve PNG fotoğrafları seçebilirsiniz.");
+        return;
+      }
+      if (file.size > maxPhotoSize) {
+        showPhotoError(`${file.name} dosyası 10 MB sınırını aşıyor.`);
+        return;
+      }
       uploadedFiles.push(file);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -264,8 +290,8 @@
         div
           .querySelector(".photos__preview-item__remove")
           .addEventListener("click", () => {
-            const idx = Array.from(preview.children).indexOf(div);
-            uploadedFiles.splice(idx, 1);
+            const idx = uploadedFiles.indexOf(file);
+            if (idx !== -1) uploadedFiles.splice(idx, 1);
             div.remove();
             if (uploadedFiles.length === 0)
               shareBtn.classList.remove("is-visible");
@@ -277,15 +303,61 @@
     });
   };
 
-  shareBtn.addEventListener("click", () => {
-    shareBtn.textContent = "✓ Gönderildi!";
-    shareBtn.style.background = "#4a9d5a";
-    setTimeout(() => {
-      shareBtn.textContent = "";
-      shareBtn.innerHTML =
-        '<svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg> Fotoğrafları Gönder';
-      shareBtn.style.background = "";
-    }, 2500);
+  photoForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (uploadedFiles.length === 0) {
+      showPhotoError("Lütfen en az bir fotoğraf seçin.");
+      return;
+    }
+
+    photoUploadError.hidden = true;
+    photoUploadSuccess.hidden = true;
+    shareBtn.disabled = true;
+    photoForm.setAttribute("aria-busy", "true");
+
+    const formData = new FormData();
+    formData.append(
+      "csrfmiddlewaretoken",
+      photoForm.querySelector("[name='csrfmiddlewaretoken']").value,
+    );
+    uploadedFiles.forEach((file) => formData.append("photos", file));
+
+    try {
+      const response = await fetch(photoForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error("Sunucudan geçerli bir yanıt alınamadı.");
+      }
+
+      if (!response.ok || !data.success) {
+        const messages = Object.values(data.errors || {})
+          .flat()
+          .map((error) => error.message);
+        throw new Error(messages[0] || "Fotoğraflar yüklenemedi.");
+      }
+
+      uploadedFiles = [];
+      preview.replaceChildren();
+      shareBtn.classList.remove("is-visible");
+      photoUploadSuccess.textContent = `${data.uploaded_count} fotoğraf başarıyla gönderildi. Teşekkür ederiz!`;
+      photoUploadSuccess.hidden = false;
+    } catch (error) {
+      showPhotoError(
+        error.message || "Bir hata oluştu. Lütfen tekrar deneyin.",
+      );
+    } finally {
+      shareBtn.disabled = false;
+      photoForm.removeAttribute("aria-busy");
+    }
   });
 
   /* ── Visibility Change ─────────────────────────── */
