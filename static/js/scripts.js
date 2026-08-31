@@ -8,6 +8,7 @@
   const skipBtn = $("#skipBtn");
   const main = $("#main");
   const headerVideo = $("#headerVideo");
+  const heroScrollCue = $("#heroScrollCue");
   const bgMusic = $("#bgMusic");
   const soundToggle = $("#soundToggle");
 
@@ -109,12 +110,29 @@
     }, 1800);
   };
 
+  /* ── Hero Scroll Cue ───────────────────────────── */
+  let scrollCueTimer;
+  const revealScrollCue = () => {
+    clearTimeout(scrollCueTimer);
+    scrollCueTimer = setTimeout(() => {
+      if (window.scrollY <= 24) heroScrollCue?.classList.add("is-visible");
+    }, 500);
+  };
+  const dismissScrollCue = () => {
+    if (window.scrollY <= 24) return;
+    clearTimeout(scrollCueTimer);
+    heroScrollCue?.classList.remove("is-visible");
+    window.removeEventListener("scroll", dismissScrollCue);
+  };
+
   /* ── Events ────────────────────────────────────── */
   skipBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     skipIntro();
   });
   introVideo.addEventListener("ended", skipIntro);
+  headerVideo.addEventListener("playing", revealScrollCue, { once: true });
+  window.addEventListener("scroll", dismissScrollCue, { passive: true });
   soundToggle.addEventListener("click", toggleMusic);
 
   /* ── Countdown ─────────────────────────────────── */

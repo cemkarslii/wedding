@@ -1,14 +1,14 @@
 {% load static %}
 <!-- ▸ Hero -->
-<section class="hero" aria-label="Gökhan ve Aysu">
+<section class="hero" aria-labelledby="heroTitle">
   <video class="video-fullscreen" id="headerVideo" loop muted playsinline preload="auto">
     <source src="{% static 'images/header.mp4' %}" type="video/mp4" />
   </video>
   <div class="hero__overlay">
-    <div class="hero__names-group">
-      <h1 class="hero__name">Aysu</h1>
-      <h1 class="hero__name">Gökhan</h1>
-    </div>
+    <h1 class="hero__names-group" id="heroTitle" aria-label="Aysu ve Gökhan">
+      <span class="hero__name" aria-hidden="true">Aysu</span>
+      <span class="hero__name" aria-hidden="true">Gökhan</span>
+    </h1>
     <p class="hero__subtitle">Evleniyoruz</p>
     <div class="hero__date-block">
       <div class="hero__date-row">
@@ -20,5 +20,11 @@
       </div>
       <span class="hero__date-weekday">Cumartesi</span>
     </div>
+    <a class="hero__scroll-cue" id="heroScrollCue" href="#welcome" aria-label="Aşağı kaydırarak davet detaylarına ilerle">
+      <span>Aşağı kaydır</span>
+      <svg class="hero__scroll-cue-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 4v14M6.5 12.5 12 18l5.5-5.5" />
+      </svg>
+    </a>
   </div>
 </section>
