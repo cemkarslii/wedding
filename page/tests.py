@@ -162,6 +162,10 @@ class UploadPhotosTests(TestCase):
         admin_user = get_user_model().objects.create_superuser(
             username="admin", email="admin@example.com", password="password"
         )
+        login_response = self.client.get(reverse("admin:login"))
+        self.assertContains(login_response, "admin-brand")
+        self.assertContains(login_response, "admin/css/admin_theme.css")
+
         self.client.force_login(admin_user)
         photo = WeddingPhoto.objects.create(file=self.make_photo("preview.png"))
         WeddingPhoto.objects.create(file=self.make_video("preview.mp4"))
@@ -169,10 +173,16 @@ class UploadPhotosTests(TestCase):
         list_response = self.client.get(
             reverse("admin:page_weddingphoto_changelist")
         )
+        dashboard_response = self.client.get(reverse("admin:index"))
         detail_response = self.client.get(
             reverse("admin:page_weddingphoto_change", args=[photo.pk])
         )
 
+        self.assertContains(dashboard_response, "dashboard-hero")
+        self.assertContains(dashboard_response, "Yönetim alanları")
+        self.assertContains(dashboard_response, "admin/css/admin_theme.css")
+        self.assertContains(list_response, "admin-brand")
+        self.assertContains(list_response, "admin/css/admin_theme.css")
         self.assertContains(list_response, "wedding-photo-thumbnail")
         self.assertContains(list_response, "wedding-video-thumbnail")
         self.assertContains(list_response, 'data-media-type="image"')

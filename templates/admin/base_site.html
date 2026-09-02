@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+  {% if subtitle %}{{ subtitle }} · {% endif %}{{ title }} · {{ site_title|default:"Düğün Yönetimi" }}
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}" />
+{% endblock %}
+
+{% block responsive %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/admin_theme.css' %}" />
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a class="admin-brand" href="{% url 'admin:index' %}">
+      <span class="admin-brand__mark" aria-hidden="true">A<span>&amp;</span>G</span>
+      <span class="admin-brand__copy">
+        <strong>{{ site_header|default:"Aysu & Gökhan" }}</strong>
+        <small>Düğün yönetimi</small>
+      </span>
+    </a>
+  </div>
+{% endblock %}
+
+{% block welcome-msg %}
+  <span class="admin-user">
+    <span class="admin-user__label">Oturum</span>
+    <strong>{% firstof user.get_short_name user.get_username %}</strong>
+  </span>
+{% endblock %}
+
+{% block userlinks %}
+  {% if site_url %}
+    <a href="{{ site_url }}">Siteyi görüntüle</a>
+  {% endif %}
+  {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">Şifreyi değiştir</a>
+  {% endif %}
+  <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+    {% csrf_token %}
+    <button type="submit">Çıkış yap</button>
+  </form>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

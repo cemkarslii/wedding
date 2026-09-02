@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static log %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}" />
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard wedding-dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block content %}
+  <div id="content-main" class="dashboard-shell">
+    <section class="dashboard-hero" aria-labelledby="dashboardTitle">
+      <div>
+        <span class="dashboard-hero__eyebrow">Yönetim paneli</span>
+        <h1 id="dashboardTitle">
+          Hoş geldin, {% firstof user.get_short_name user.get_username %}
+        </h1>
+        <p>Davetli mesajlarını ve paylaşılan medyaları tek yerden güvenle yönetin.</p>
+      </div>
+      <time class="dashboard-hero__date" datetime="{% now 'Y-m-d' %}">{% now "j F Y" %}</time>
+    </section>
+
+    <div class="dashboard-grid">
+      <section class="dashboard-panel dashboard-apps" aria-labelledby="managementTitle">
+        <header class="dashboard-panel__header">
+          <div>
+            <span class="dashboard-panel__eyebrow">İçerik</span>
+            <h2 id="managementTitle">Yönetim alanları</h2>
+          </div>
+        </header>
+        {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+      </section>
+
+      <aside class="dashboard-panel dashboard-activity" aria-labelledby="activityTitle">
+        <header class="dashboard-panel__header">
+          <div>
+            <span class="dashboard-panel__eyebrow">Geçmiş</span>
+            <h2 id="activityTitle">Son işlemler</h2>
+          </div>
+        </header>
+        {% get_admin_log 8 as admin_log for_user user %}
+        {% if admin_log %}
+          <ol class="dashboard-action-list">
+            {% for entry in admin_log %}
+              <li class="dashboard-action{% if entry.is_addition %} is-addition{% elif entry.is_change %} is-change{% elif entry.is_deletion %} is-deletion{% endif %}">
+                <span class="dashboard-action__indicator" aria-hidden="true"></span>
+                <div class="dashboard-action__content">
+                  <span class="dashboard-action__type">
+                    {% if entry.is_addition %}Eklendi{% elif entry.is_change %}Güncellendi{% elif entry.is_deletion %}Silindi{% endif %}
+                  </span>
+                  {% if entry.is_deletion or not entry.get_admin_url %}
+                    <strong>{{ entry.object_repr }}</strong>
+                  {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                  {% endif %}
+                  <span class="dashboard-action__meta">
+                    {% if entry.content_type %}{{ entry.content_type.name|capfirst }} · {% endif %}{{ entry.action_time|date:"j M, H:i" }}
+                  </span>
+                </div>
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <div class="dashboard-empty">
+            <span aria-hidden="true">✓</span>
+            <p>Henüz kayıtlı bir işlem bulunmuyor.</p>
+          </div>
+        {% endif %}
+      </aside>
+    </div>
+  </div>
+{% endblock %}

@@ -12,6 +12,11 @@ from django.utils.html import format_html
 from .models import WeddingMessage, WeddingPhoto
 
 
+admin.site.site_header = "Aysu & Gökhan"
+admin.site.site_title = "Düğün Yönetimi"
+admin.site.index_title = "Yönetim Paneli"
+
+
 class MediaTypeFilter(admin.SimpleListFilter):
     title = "Medya türü"
     parameter_name = "media_type"
