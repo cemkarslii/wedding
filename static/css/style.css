@@ -955,8 +955,7 @@ textarea {
   background: var(--c-cream-dark);
   animation: fadeIn 0.4s var(--ease) forwards;
 }
-.photos__preview-item img,
-.photos__preview-item video {
+.photos__preview-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;

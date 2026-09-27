@@ -8,10 +8,6 @@
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.wedding-video-thumbnail {
-  background: #111;
-}
-
 .media-dialog-trigger {
   display: inline-block;
   padding: 0;
@@ -104,8 +100,7 @@
   justify-content: center;
 }
 
-.wedding-media-dialog__content img,
-.wedding-media-dialog__content video {
+.wedding-media-dialog__content img {
   max-width: 100%;
   max-height: calc(92vh - 100px);
   border-radius: 8px;
@@ -268,12 +263,6 @@ body.wedding-photo-grid .wedding-photo-thumbnail {
 
 body.wedding-photo-grid #result_list .field-uploaded_at {
   padding: 4px 12px 13px;
-  color: var(--body-quiet-color);
-  font-size: 0.82rem;
-}
-
-body.wedding-photo-grid #result_list .field-media_type {
-  padding: 4px 12px;
   color: var(--body-quiet-color);
   font-size: 0.82rem;
 }

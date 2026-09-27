@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from django.db import models
 
 
@@ -25,18 +23,14 @@ class WeddingMessage(models.Model):
 
 
 class WeddingPhoto(models.Model):
-    """Uploaded wedding media (legacy model name retained for URL compatibility)."""
+    """A photo uploaded by a wedding guest."""
 
-    file = models.FileField(upload_to="wedding_media/")
+    file = models.ImageField(upload_to="wedding_media/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def is_video(self):
-        return Path(self.file.name).suffix.lower() in {".mp4", ".mov", ".webm"}
 
     def __str__(self):
         return self.file.name
 
     class Meta:
-        verbose_name = "düğün medyası"
-        verbose_name_plural = "düğün medyaları"
+        verbose_name = "düğün fotoğrafı"
+        verbose_name_plural = "düğün fotoğrafları"

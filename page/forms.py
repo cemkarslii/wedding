@@ -5,15 +5,9 @@ from django import forms
 from page.models import MessageTypeChoices, WeddingMessage
 
 
-MAX_PHOTO_SIZE = 10 * 1024 * 1024
-MAX_VIDEO_SIZE = 100 * 1024 * 1024
+MAX_IMAGE_SIZE = 1024 * 1024 * 1024
 MAX_MEDIA_PER_UPLOAD = 10
 ALLOWED_IMAGE_TYPES = {"image/jpeg": ".jpg", "image/png": ".png"}
-ALLOWED_VIDEO_TYPES = {
-    "video/mp4": {".mp4", ".mov"},
-    "video/quicktime": {".mov"},
-    "video/webm": {".webm"},
-}
 
 
 class MultipleMediaInput(forms.ClearableFileInput):
@@ -30,7 +24,7 @@ class MultipleMediaField(forms.FileField):
         return [single_file_clean(data, initial)]
 
 
-class WeddingMediaUploadForm(forms.Form):
+class WeddingPhotoUploadForm(forms.Form):
     media_files = MultipleMediaField()
 
     def clean_media_files(self):
@@ -54,31 +48,14 @@ class WeddingMediaUploadForm(forms.Form):
                 )
                 if not extension_is_valid:
                     raise forms.ValidationError("Görsel uzantısı dosya türüyle eşleşmiyor.")
-                if media_file.size > MAX_PHOTO_SIZE:
+                if media_file.size > MAX_IMAGE_SIZE:
                     raise forms.ValidationError(
-                        f"{media_file.name} dosyası 10 MB sınırını aşıyor."
+                        f"{media_file.name} dosyası 1 GB sınırını aşıyor."
                     )
                 forms.ImageField().clean(media_file)
                 continue
 
-            if content_type in ALLOWED_VIDEO_TYPES:
-                if extension not in ALLOWED_VIDEO_TYPES[content_type]:
-                    raise forms.ValidationError("Video uzantısı dosya türüyle eşleşmiyor.")
-                if media_file.size > MAX_VIDEO_SIZE:
-                    raise forms.ValidationError(
-                        f"{media_file.name} dosyası 100 MB sınırını aşıyor."
-                    )
-                header = media_file.read(12)
-                media_file.seek(0)
-                is_iso_video = extension in {".mp4", ".mov"} and header[4:8] == b"ftyp"
-                is_webm = extension == ".webm" and header[:4] == b"\x1aE\xdf\xa3"
-                if not (is_iso_video or is_webm):
-                    raise forms.ValidationError(f"{media_file.name} geçerli bir video değil.")
-                continue
-
-            raise forms.ValidationError(
-                "Yalnızca JPG, PNG, MP4, MOV veya WebM yükleyebilirsiniz."
-            )
+            raise forms.ValidationError("Yalnızca JPG veya PNG görsel yükleyebilirsiniz.")
 
         return media_files
 

@@ -2,7 +2,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from page.forms import WeddingMediaUploadForm, WeddingMessageForm
+from page.forms import WeddingMessageForm, WeddingPhotoUploadForm
 from page.models import WeddingPhoto
 
 # Create your views here.
@@ -38,7 +38,7 @@ def upload_photos(request):
     if request.method != "POST":
         return redirect(reverse("home") + "#share-photo")
 
-    form = WeddingMediaUploadForm(request.POST, request.FILES)
+    form = WeddingPhotoUploadForm(request.POST, request.FILES)
     if not form.is_valid():
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse(

@@ -95,6 +95,8 @@ STATIC_ROOT = BASE_DIR / "public/static"
 # User-uploaded files
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "public/media"
+# Keep large images out of application memory while allowing uploads up to 1 GB.
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 
 # Logging
 LOGGING = {

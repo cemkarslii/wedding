@@ -19,7 +19,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     const mediaDialog = document.createElement("dialog");
     mediaDialog.className = "wedding-media-dialog";
-    mediaDialog.setAttribute("aria-label", "Medya önizlemesi");
+    mediaDialog.setAttribute("aria-label", "Fotoğraf önizlemesi");
     mediaDialog.innerHTML = `
       <button type="button" class="wedding-media-dialog__close" aria-label="Kapat">×</button>
       <div class="wedding-media-dialog__content"></div>
@@ -33,17 +33,9 @@
 
     const openMediaDialog = (trigger) => {
       dialogContent.replaceChildren();
-      const media = document.createElement(
-        trigger.dataset.mediaType === "video" ? "video" : "img",
-      );
+      const media = document.createElement("img");
       media.src = trigger.dataset.mediaUrl;
-      if (media instanceof HTMLVideoElement) {
-        media.controls = true;
-        media.autoplay = true;
-        media.playsInline = true;
-      } else {
-        media.alt = trigger.getAttribute("aria-label") || "Görsel önizlemesi";
-      }
+      media.alt = trigger.getAttribute("aria-label") || "Görsel önizlemesi";
       dialogContent.appendChild(media);
       mediaDialog.showModal();
     };
@@ -77,10 +69,7 @@
     mediaDialog.addEventListener("click", (event) => {
       if (event.target === mediaDialog) closeDialog();
     });
-    mediaDialog.addEventListener("close", () => {
-      dialogContent.querySelector("video")?.pause();
-      dialogContent.replaceChildren();
-    });
+    mediaDialog.addEventListener("close", () => dialogContent.replaceChildren());
 
     const buttons = document.querySelectorAll("[data-photo-view]");
     if (!buttons.length) return;

@@ -11,7 +11,9 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDict
 
+from page.forms import MAX_IMAGE_SIZE, WeddingPhotoUploadForm
 from page.models import WeddingMessage, WeddingPhoto
 
 
@@ -131,17 +133,26 @@ class UploadPhotosTests(TestCase):
         for photo in WeddingPhoto.objects.all():
             self.assertTrue(photo.file.storage.exists(photo.file.name))
 
-    def test_ajax_upload_accepts_video(self):
+    def test_ajax_upload_rejects_video(self):
         response = self.client.post(
             reverse("upload_photos"),
             {"media_files": self.make_video()},
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
 
-        self.assertEqual(response.status_code, 200)
-        media = WeddingPhoto.objects.get()
-        self.assertTrue(media.is_video)
-        self.assertTrue(media.file.storage.exists(media.file.name))
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("media_files", response.json()["errors"])
+        self.assertFalse(WeddingPhoto.objects.exists())
+
+    def test_image_larger_than_one_gigabyte_is_rejected(self):
+        image = self.make_photo("oversized.png")
+        image.size = MAX_IMAGE_SIZE + 1
+        form = WeddingPhotoUploadForm(
+            data={}, files=MultiValueDict({"media_files": [image]})
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("1 GB sınırını aşıyor", str(form.errors["media_files"]))
 
     def test_invalid_image_is_rejected(self):
         response = self.client.post(
@@ -168,8 +179,6 @@ class UploadPhotosTests(TestCase):
 
         self.client.force_login(admin_user)
         photo = WeddingPhoto.objects.create(file=self.make_photo("preview.png"))
-        WeddingPhoto.objects.create(file=self.make_video("preview.mp4"))
-
         list_response = self.client.get(
             reverse("admin:page_weddingphoto_changelist")
         )
@@ -184,12 +193,9 @@ class UploadPhotosTests(TestCase):
         self.assertContains(list_response, "admin-brand")
         self.assertContains(list_response, "admin/css/admin_theme.css")
         self.assertContains(list_response, "wedding-photo-thumbnail")
-        self.assertContains(list_response, "wedding-video-thumbnail")
         self.assertContains(list_response, 'data-media-type="image"')
-        self.assertContains(list_response, 'data-media-type="video"')
         self.assertContains(list_response, "media-preview-primary")
         self.assertContains(list_response, "media-zoom-button")
-        self.assertContains(list_response, "Medya türü")
         self.assertContains(list_response, "Dosya boyutu")
         self.assertContains(list_response, f"{len(self.png_content)} B")
         self.assertContains(list_response, 'data-photo-view="list"')
@@ -197,19 +203,6 @@ class UploadPhotosTests(TestCase):
         self.assertContains(list_response, "data-select-all-photos")
         self.assertContains(list_response, "data-download-selected")
         self.assertContains(detail_response, "wedding-photo-large-preview")
-
-        video_response = self.client.get(
-            reverse("admin:page_weddingphoto_changelist") + "?media_type=video"
-        )
-        video = WeddingPhoto.objects.get(file__iendswith="preview.mp4")
-        self.assertContains(
-            video_response,
-            reverse("admin:page_weddingphoto_change", args=[video.pk]),
-        )
-        self.assertNotContains(
-            video_response,
-            reverse("admin:page_weddingphoto_change", args=[photo.pk]),
-        )
 
     def test_deleting_photo_record_removes_stored_file(self):
         photo = WeddingPhoto.objects.create(file=self.make_photo("delete-me.png"))
@@ -227,7 +220,7 @@ class UploadPhotosTests(TestCase):
         )
         self.client.force_login(admin_user)
         first = WeddingPhoto.objects.create(file=self.make_photo("first.png"))
-        second = WeddingPhoto.objects.create(file=self.make_video("second.mp4"))
+        WeddingPhoto.objects.create(file=self.make_photo("second.png"))
 
         response = self.client.post(
             reverse("admin:page_weddingphoto_changelist"),
@@ -246,6 +239,6 @@ class UploadPhotosTests(TestCase):
             archived_names = archive.namelist()
         self.assertEqual(len(archived_names), 2)
         self.assertTrue(any(name.endswith("first.png") for name in archived_names))
-        self.assertTrue(any(name.endswith("second.mp4") for name in archived_names))
+        self.assertTrue(any(name.endswith("second.png") for name in archived_names))
 
 # Create your tests here.

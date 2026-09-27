@@ -250,11 +250,9 @@
   const photoUploadError = $("#photoUploadError");
   const photoUploadSuccess = $("#photoUploadSuccess");
   let uploadedFiles = [];
-  const maxPhotoSize = 10 * 1024 * 1024;
-  const maxVideoSize = 100 * 1024 * 1024;
+  const maxPhotoSize = 1024 * 1024 * 1024;
   const maxMediaCount = 10;
   const allowedImageTypes = ["image/jpeg", "image/png"];
-  const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
 
   const showPhotoError = (message) => {
     photoUploadError.textContent = message;
@@ -288,21 +286,16 @@
     photoUploadSuccess.hidden = true;
     Array.from(files).forEach((file) => {
       const isImage = allowedImageTypes.includes(file.type);
-      const isVideo = allowedVideoTypes.includes(file.type);
       if (uploadedFiles.length >= maxMediaCount) {
         showPhotoError(`Tek seferde en fazla ${maxMediaCount} dosya seçebilirsiniz.`);
         return;
       }
-      if (!isImage && !isVideo) {
-        showPhotoError("Yalnızca JPG, PNG, MP4, MOV veya WebM seçebilirsiniz.");
+      if (!isImage) {
+        showPhotoError("Yalnızca JPG veya PNG görsel seçebilirsiniz.");
         return;
       }
-      if (isImage && file.size > maxPhotoSize) {
-        showPhotoError(`${file.name} dosyası 10 MB sınırını aşıyor.`);
-        return;
-      }
-      if (isVideo && file.size > maxVideoSize) {
-        showPhotoError(`${file.name} dosyası 100 MB sınırını aşıyor.`);
+      if (file.size > maxPhotoSize) {
+        showPhotoError(`${file.name} dosyası 1 GB sınırını aşıyor.`);
         return;
       }
       uploadedFiles.push(file);
@@ -311,10 +304,10 @@
       div.className = "photos__preview-item";
       div.dataset.previewUrl = previewUrl;
       div.innerHTML = `
-        ${isVideo ? '<video controls muted playsinline preload="metadata"></video>' : '<img alt="Fotoğraf önizlemesi" />'}
+        <img alt="Fotoğraf önizlemesi" />
         <button class="photos__preview-item__remove" aria-label="Kaldır">×</button>
       `;
-      div.querySelector(isVideo ? "video" : "img").src = previewUrl;
+      div.querySelector("img").src = previewUrl;
       div
         .querySelector(".photos__preview-item__remove")
         .addEventListener("click", () => {
@@ -333,7 +326,7 @@
   photoForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (uploadedFiles.length === 0) {
-      showPhotoError("Lütfen en az bir fotoğraf veya video seçin.");
+      showPhotoError("Lütfen en az bir fotoğraf seçin.");
       return;
     }
 
